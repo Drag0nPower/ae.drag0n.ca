@@ -20,6 +20,7 @@ let leftLFO = null;
 let rightLFO = null;
 
 // Create cosmic particles
+const particleFragment = document.createDocumentFragment();
 for (let i = 0; i < 80; i++) {
     const particle = document.createElement('div');
     particle.className = 'particle';
@@ -31,8 +32,9 @@ for (let i = 0; i < 80; i++) {
         top: `${Math.random() * 100}%`,
         animationDelay: `${Math.random() * 4}s`
     });
-    document.body.appendChild(particle);
+    particleFragment.appendChild(particle);
 }
+document.body.appendChild(particleFragment);
 
 function animate() {
     const now = performance.now();
@@ -157,6 +159,11 @@ function stopDragSound() {
 }
 
 function handleStart(x, y) {
+    // Ensure AudioContext is running (browsers often suspend it until user interaction)
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+
     isDragging = true;
     playTapSound();
     startDragSound();

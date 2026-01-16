@@ -1,6 +1,11 @@
 # Celestial Dragon Egg
 
-Welcome to the **Celestial Dragon Egg** project! This is an interactive web-based experiment featuring a draggable, spinning egg with cosmic particles, a nebula background, and immersive audio effects. Built with vanilla JavaScript, HTML, and CSS, this project showcases dynamic movement, Web Audio API sound design, and haptic feedback for a mystical user experience. The long-term vision is to make the egg more interactive, enabling it to learn from user interactions and communicate in creative ways.
+Welcome to the **Celestial Dragon Egg** project! This is an interactive web-based experiment featuring a draggable, spinning egg with cosmic particles, a nebula background, and immersive audio effects.
+
+The Dragon egg is also **Project Æ (Ash)**: A future focus where we are building a mystical ethereal egg called "Æ".
+- *The Lore*: A fictional storyline oddly entwined with real-world events, sometimes almost predicting them.
+
+Built with vanilla JavaScript, HTML, and CSS, this project showcases dynamic movement, Web Audio API sound design, and haptic feedback for a mystical user experience. The long-term vision is to make the egg more interactive, enabling it to learn from user interactions and communicate in creative ways.
 
 ## Features
 
@@ -16,14 +21,14 @@ Welcome to the **Celestial Dragon Egg** project! This is an interactive web-base
 
 ## Demo
 
-Try it out live at [https://drag0npower.github.io/ae.drag0n.ca/](https://drag0npower.github.io/ae.drag0n.ca/)
+Try it out live at [ae.drag0n.ca](https://ae.drag0n.ca)
 
 ## Installation
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/jasonbra1n/ae.git
-   cd ae
+   git clone https://github.com/Drag0nPower/ae.drag0n.ca.git
+   cd ae.drag0n.ca
    ```
 
 2. **Open the Project**:
