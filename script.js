@@ -42,11 +42,31 @@ function animate() {
     lastFrameTime = now;
 
     if (!isDragging) {
-        spinVelocity *= 0.95;
-        velX *= 0.9;
-        velY *= 0.9;
-        posX = Math.max(50, Math.min(window.innerWidth - 50, posX + velX));
-        posY = Math.max(66, Math.min(window.innerHeight - 66, posY + velY));
+        spinVelocity *= 0.98; // Reduced friction for longer spins
+        velX *= 0.92; // Slightly floatier movement
+        velY *= 0.92;
+
+        // Calculate next position
+        let nextX = posX + velX;
+        let nextY = posY + velY;
+
+        // Wall Bouncing X
+        if (nextX < 50 || nextX > window.innerWidth - 50) {
+            velX *= -0.7; // Reverse velocity with dampening
+            playBounceSound(Math.abs(velX));
+            nextX = Math.max(50, Math.min(window.innerWidth - 50, nextX));
+        }
+
+        // Wall Bouncing Y
+        if (nextY < 66 || nextY > window.innerHeight - 66) {
+            velY *= -0.7;
+            playBounceSound(Math.abs(velY));
+            nextY = Math.max(66, Math.min(window.innerHeight - 66, nextY));
+        }
+
+        posX = nextX;
+        posY = nextY;
+
         if (Math.abs(spinVelocity) < 0.1) spinVelocity = 0;
         rotateZ += spinVelocity * deltaTime * 60;
     }
@@ -71,6 +91,24 @@ function playTapSound() {
     gainNode.connect(audioContext.destination);
     oscillator.start();
     oscillator.stop(audioContext.currentTime + 0.2);
+}
+
+function playBounceSound(intensity) {
+    if (intensity < 5) return; // Ignore soft impacts
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.type = 'triangle'; // Thud sound
+    oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.15);
+    
+    const volume = Math.min(0.6, intensity / 60);
+    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.15);
+    
+    oscillator.connect(gainNode).connect(audioContext.destination);
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.15);
 }
 
 function startDragSound() {
@@ -188,7 +226,7 @@ function handleMove(x, y) {
         posX = initialPosX + deltaX;
         posY = initialPosY + deltaY;
         const spinDelta = x - lastMouseX;
-        spinVelocity = spinDelta * 0.5;
+        spinVelocity = spinDelta * 0.8; // Increased torque sensitivity
         rotateZ += spinDelta * 0.3;
         velX = (x - lastMouseX) * 2;
         velY = (y - lastMouseY) * 2;
