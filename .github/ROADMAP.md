@@ -26,6 +26,8 @@ This document tracks the evolution of the Celestial Dragon Egg (Æ).
 - [ ] **Visual Language**:
     - [ ] Particle color shifts based on mood (Blue = Calm, Red = Agitated).
     - [ ] Emblem glow intensity changes.
+    - [ ] **Motion Trails (Easter Egg)**: Particles trail behind the egg when thrown at high velocity or specific spin rates.
+    - [ ] **Konami Code (Retro Mode)**: Enter the classic code to trigger 8-bit visuals and chiptune audio (Desktop).
 - [ ] **Audio Evolution**:
     - [ ] Dynamic harmonic series based on total spin count.
     - [ ] "Purring" modulation when held still.
@@ -45,13 +47,14 @@ This document tracks the evolution of the Celestial Dragon Egg (Æ).
 - [ ] **Backend Migration**: Move from GitHub Pages to cPanel (PHP/SQL).
 - [ ] **Persistence**: Database to store user interactions (spin count, "mood" history).
 - [ ] **Identity**:
+    - [ ] **Settings Dashboard**: A gear icon triggers an overlay with configuration options, login/register forms, and debug stats.
     - [ ] **Login System**: Allow users to register to save their progress and "Care Metrics" permanently.
     - [ ] **Global Memory**: Ash remembers who tended to it best/most/least across all users.
 
 ## 🟣 Phase 6: The Soul (AI Integration)
 - [ ] **LLM Connection**: Connect the egg to an AI model to generate dynamic responses.
 - [ ] **Invocation (Voice Input)**: Use Web Speech API to allow users to speak commands or greetings to Ash.
-- [ ] **Scripture (Text Input)**: A chat interface to send text messages to the egg.
+- [ ] **Scripture (Text Input)**: A chat icon opens a bubble interface to send text messages to the egg.
 - [ ] **Evolution**: The egg "learns" from interactions, unlocking hidden "Easter eggs".
 - [ ] **Sentience**: The egg communicates back based on aggregate user history.
 

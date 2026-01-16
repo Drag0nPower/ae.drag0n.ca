@@ -19,6 +19,35 @@ let rightPanner = null;
 let leftLFO = null;
 let rightLFO = null;
 
+// Memory System (The Mind)
+const memory = {
+    totalSpins: 0,
+    totalDistance: 0,
+    visitCount: 0,
+    lastVisit: Date.now()
+};
+
+function loadMemory() {
+    const saved = localStorage.getItem('ash_memory');
+    if (saved) {
+        Object.assign(memory, JSON.parse(saved));
+    }
+    memory.visitCount++;
+    localStorage.setItem('ash_memory', JSON.stringify(memory));
+    console.log("Ash remembers...", memory);
+}
+loadMemory();
+
+function saveMemory() {
+    memory.lastVisit = Date.now();
+    localStorage.setItem('ash_memory', JSON.stringify(memory));
+}
+
+// Konami Code State
+const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+let konamiIndex = 0;
+let retroMode = false;
+
 // Create cosmic particles
 const particleFragment = document.createDocumentFragment();
 for (let i = 0; i < 80; i++) {
@@ -42,9 +71,13 @@ function animate() {
     lastFrameTime = now;
 
     if (!isDragging) {
-        spinVelocity *= 0.98; // Reduced friction for longer spins
-        velX *= 0.92; // Slightly floatier movement
-        velY *= 0.92;
+        // Physics: Friction (Lower friction in Retro Mode)
+        const friction = retroMode ? 0.999 : 0.98;
+        const dragFriction = retroMode ? 0.99 : 0.92;
+        
+        spinVelocity *= friction;
+        velX *= dragFriction;
+        velY *= dragFriction;
 
         // Calculate next position
         let nextX = posX + velX;
@@ -52,14 +85,14 @@ function animate() {
 
         // Wall Bouncing X
         if (nextX < 50 || nextX > window.innerWidth - 50) {
-            velX *= -0.7; // Reverse velocity with dampening
+            velX *= retroMode ? -1 : -0.7; // Perfect elasticity in Retro Mode
             playBounceSound(Math.abs(velX));
             nextX = Math.max(50, Math.min(window.innerWidth - 50, nextX));
         }
 
         // Wall Bouncing Y
         if (nextY < 66 || nextY > window.innerHeight - 66) {
-            velY *= -0.7;
+            velY *= retroMode ? -1 : -0.7;
             playBounceSound(Math.abs(velY));
             nextY = Math.max(66, Math.min(window.innerHeight - 66, nextY));
         }
@@ -68,7 +101,14 @@ function animate() {
         posY = nextY;
 
         if (Math.abs(spinVelocity) < 0.1) spinVelocity = 0;
-        rotateZ += spinVelocity * deltaTime * 60;
+        
+        const rotationStep = spinVelocity * deltaTime * 60;
+        rotateZ += rotationStep;
+        
+        // Track spins in memory
+        if (Math.abs(rotationStep) > 0) {
+            memory.totalSpins += Math.abs(rotationStep) / 360;
+        }
     }
 
     egg.style.left = `${posX}px`;
@@ -83,7 +123,7 @@ let lastMouseX, lastMouseY, startX, startY, initialPosX, initialPosY;
 function playTapSound() {
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
-    oscillator.type = 'sine';
+    oscillator.type = retroMode ? 'square' : 'sine';
     oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
@@ -98,7 +138,7 @@ function playBounceSound(intensity) {
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
     
-    oscillator.type = 'triangle'; // Thud sound
+    oscillator.type = retroMode ? 'sawtooth' : 'triangle';
     oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
     oscillator.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.15);
     
@@ -117,7 +157,7 @@ function startDragSound() {
         leftOscillator = audioContext.createOscillator();
         leftGainNode = audioContext.createGain();
         leftPanner = audioContext.createStereoPanner();
-        leftOscillator.type = 'sine';
+        leftOscillator.type = retroMode ? 'square' : 'sine';
         leftOscillator.frequency.setValueAtTime(77, audioContext.currentTime);
         leftGainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
         leftPanner.pan.setValueAtTime(-1, audioContext.currentTime); // Fully left
@@ -127,7 +167,7 @@ function startDragSound() {
         rightOscillator = audioContext.createOscillator();
         rightGainNode = audioContext.createGain();
         rightPanner = audioContext.createStereoPanner();
-        rightOscillator.type = 'sine';
+        rightOscillator.type = retroMode ? 'square' : 'sine';
         rightOscillator.frequency.setValueAtTime(117, audioContext.currentTime);
         rightGainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
         rightPanner.pan.setValueAtTime(1, audioContext.currentTime); // Fully right
@@ -231,6 +271,10 @@ function handleMove(x, y) {
         velX = (x - lastMouseX) * 2;
         velY = (y - lastMouseY) * 2;
         adjustDragPitch(velX);
+        
+        // Track distance in memory
+        memory.totalDistance += Math.hypot(deltaX, deltaY);
+        
         lastMouseX = x;
         lastMouseY = y;
         
@@ -255,6 +299,9 @@ function handleEnd() {
         if (navigator.vibrate) {
             navigator.vibrate(0);
         }
+        
+        // Save memory on interaction end
+        saveMemory();
     }
 }
 
@@ -283,3 +330,30 @@ window.addEventListener('resize', () => {
         posY = window.innerHeight / 2;
     }
 });
+
+// Konami Code Listener
+document.addEventListener('keydown', (e) => {
+    if (e.key === konamiCode[konamiIndex]) {
+        konamiIndex++;
+        if (konamiIndex === konamiCode.length) {
+            toggleRetroMode();
+            konamiIndex = 0;
+        }
+    } else {
+        konamiIndex = 0;
+    }
+});
+
+function toggleRetroMode() {
+    retroMode = !retroMode;
+    console.log(`Retro Mode: ${retroMode ? 'ON' : 'OFF'}`);
+    
+    if (retroMode) {
+        document.body.style.imageRendering = 'pixelated';
+        document.body.style.filter = 'contrast(1.5) saturate(2) hue-rotate(90deg)';
+        // Note: Audio changes happen dynamically in startDragSound/playTapSound checks
+    } else {
+        document.body.style.imageRendering = 'auto';
+        document.body.style.filter = 'none';
+    }
+}

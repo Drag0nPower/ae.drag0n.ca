@@ -6,8 +6,9 @@ All notable changes to **Project Æ (Celestial Dragon Egg)** will be documented 
 ### Added
 - **Project Structure**: Added `.gemini` and `.github` folders.
 - **Documentation**: Added `docs/PHYSICS.md` and `docs/AUDIO.md`.
-- **Roadmap**: Expanded with "Brainwave Modes" (Theta/Delta/Alpha/Chaos), "Care Metrics", and "The Hatching" (Phase 7).
+- **Roadmap**: Expanded with "Settings Dashboard", "Chat UI", "Brainwave Modes", "Konami Code", "Care Metrics", "Motion Trails", and "The Hatching".
 - **Audio**: Added `playBounceSound()` for wall impacts (Triangle wave).
+- **Documentation**: Added `docs/CONTRA.md` detailing the planned Konami Code Easter egg.
 ### Fixed
 - **Audio**: Added `audioContext.resume()` on first interaction to prevent browser autoplay blocking.
 ### Changed

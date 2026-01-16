@@ -85,6 +85,7 @@ Try it out live at [ae.drag0n.ca](https://ae.drag0n.ca)
 The ultimate aim is to evolve the Celestial Dragon Egg into a more interactive entity:
 - **Learning**: Track user interactions (e.g., drag patterns, frequency of touches) to adapt its behavior over time.
 - **Communication**: Introduce visual or auditory responses—like changing colors, emitting unique sounds, or subtle animations—to "talk back" to the user based on its "learned" understanding.
+- **Discovery**: Embed secret "Easter eggs" and hidden mechanics that reward curiosity, specific interaction patterns, or alignment with real-world events.
 
 ## Contributing
 
